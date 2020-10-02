@@ -5,7 +5,7 @@ import EditAuthor from './EditAuthor'
 
 
 const Authors = (props) => {
-  const { loading, error, data } = useQuery(ALL_AUTHORS, { pollInterval: 2000 })
+  const { loading, error, data } = useQuery(ALL_AUTHORS, { pollInterval: 100000 })
 
   if (!props.show) {
     return null
