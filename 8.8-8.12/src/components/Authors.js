@@ -1,13 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
-import { resultKeyNameFromField } from '@apollo/client/utilities'
+import React from 'react'
+import { useQuery } from '@apollo/client'
+import { ALL_AUTHORS } from '../queries'
+import EditAuthor from './EditAuthor'
+
 
 const Authors = (props) => {
+  const { loading, error, data } = useQuery(ALL_AUTHORS, { pollInterval: 2000 })
+
   if (!props.show) {
     return null
   }
 
-  const authors = props.authors
+  if (loading) return <div>loading...</div>
+
+  if (error) return <div>Error loading the authors</div>
+  
+  const authors = data.allAuthors
 
   return (
     <div>
@@ -32,7 +40,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-
+      <EditAuthor authors={authors} />
     </div>
   )
 }
