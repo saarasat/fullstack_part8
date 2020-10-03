@@ -5,7 +5,7 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    minlength: 2
+    minlength: 4
   },
   published: {
     type: Number,
