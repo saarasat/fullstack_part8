@@ -22,7 +22,7 @@ const NewBook = ({ show, setError }) => {
     createBook({ variables: { title, author, published, genres }})
 
     setTitle('')
-    setPublished('')
+    setPublished(2000)
     setAuthor('')
     setGenres([])
     setGenre('')

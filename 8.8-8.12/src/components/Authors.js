@@ -5,7 +5,7 @@ import EditAuthor from './EditAuthor'
 
 
 const Authors = (props) => {
-  const { loading, error, data } = useQuery(ALL_AUTHORS, { pollInterval: 100000 })
+  const { loading, error, data } = useQuery(ALL_AUTHORS)
 
   if (!props.show) {
     return null
@@ -23,7 +23,9 @@ const Authors = (props) => {
       <table>
         <tbody>
           <tr>
-            <th></th>
+            <th>
+              name
+            </th>
             <th>
               born
             </th>

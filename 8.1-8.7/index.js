@@ -3,6 +3,7 @@ const { v1: uuid } = require('uuid')
 const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
+const { UserInputError } = require('apollo-server')
 
 mongoose.set('useFindAndModify', false)
 
@@ -49,7 +50,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String, genre: String): [Book!]!
+    allBooks: [Book!]!
     allAuthors: [Author!]!
   }
 
@@ -70,19 +71,22 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
-      if (!args.author && !args.genre) return books
-      if (args.genre) {
-        return books.filter(b => b.genres.find((g) => g == args.genre))
-      } 
-      return books.filter(b => b.author == args.author)
+    bookCount: async () => await Book.collection.countDocuments(),
+    authorCount: async () => await Author.collection.countDocuments(),
+    allBooks: async () => {
+      const books = await Book.find({}).populate('author')
+      return books
     },
-    allAuthors: () => authors,
-  }, 
+    allAuthors: async () => {
+      const authors = await Author.find({})
+      return authors
+    },
+  },
   Author: {
-    bookCount: (root) => books.filter(b => b.author === root.name).length
+    bookCount: async (root, args) => {
+      const books = await Book.find({ author: { $in: [root._id]}})
+      return books.length
+    } 
   },
   Mutation: {
     addBook: async (root, args) => {
@@ -100,16 +104,18 @@ const resolvers = {
       try {
         await book.save()
       } catch (error) {
-        console.log(error)
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
       }
       return book
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(a => a.name === args.name)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+      
       if (!author) return null
-      const updatedAuthor = { ...author, born: args.born }
-      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
-      return updatedAuthor
+      author.born = args.born
+      return author.save()
     }
   }
 }
