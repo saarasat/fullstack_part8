@@ -85,28 +85,34 @@ const resolvers = {
   Author: {
     bookCount: async (root, args) => {
       const books = await Book.find({ author: { $in: [root._id]}})
-      return books.length
+      if (books) return books.length
+      else return 0
     } 
   },
   Mutation: {
     addBook: async (root, args) => {
-      let author = await Author.findOne({ name: args.author })
+      const authorName = args.author;
+
+      let author = await Author.findOne({ name: authorName });
 
       if (!author) {
-        author = new Author({ name: args.author }) 
+        author = new Author({ name: authorName });
         try {
-          await author.save()
+          await author.save();
         } catch (error) {
-          console.log(error)
-        }        
+          throw new UserInputError(error.message, {
+            invalidArgs: args
+          });
+        }
       }
-      const book = new Book({ ...args, author })
+      const book = new Book({ ...args, author, id: uuid() });
       try {
-        await book.save()
+        await book.save();
+        await author.save();
       } catch (error) {
         throw new UserInputError(error.message, {
-          invalidArgs: args,
-        })
+          invalidArgs: args
+        });
       }
       return book
     },

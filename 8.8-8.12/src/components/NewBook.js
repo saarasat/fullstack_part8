@@ -10,7 +10,13 @@ const NewBook = ({ show, setError }) => {
   const [genres, setGenres] = useState([])
 
   const [ createBook ] = useMutation(CREATE_BOOK, {
-    refetchQueries: [ { query: ALL_BOOKS } ]
+    refetchQueries: [ { query: ALL_BOOKS } ],
+    onError: (error) => {
+      if (error.graphQLErrors[0].extensions.code === "BAD_USER_INPUT") {
+        setError("Check the title and author, they should be more than 2 characters")
+      }
+      setError(error.graphQLErrors[0].message)
+    }
   })
 
   if (!show) {

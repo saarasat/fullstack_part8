@@ -26,6 +26,7 @@ const App = () => {
 
       <Authors
         show={page === 'authors'}
+        setError={setErrorMessage}
       />
       <Books
         show={page === 'books'}

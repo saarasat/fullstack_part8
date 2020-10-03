@@ -4,10 +4,10 @@ import { ALL_AUTHORS } from '../queries'
 import EditAuthor from './EditAuthor'
 
 
-const Authors = (props) => {
+const Authors = ({ show, setError }) => {
   const { loading, error, data } = useQuery(ALL_AUTHORS)
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
@@ -42,7 +42,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-      <EditAuthor authors={authors} />
+      <EditAuthor setError={setError} authors={authors} />
     </div>
   )
 }

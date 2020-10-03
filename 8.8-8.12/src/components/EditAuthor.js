@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
-const EditAuthor = ({ authors }) => {
+const EditAuthor = ({ authors, setError }) => {
   const [born, setBorn] = useState(0)
-  const [name, setName] = useState(authors ? authors[0].name : '')
+  const [name, setName] = useState('')
 
   const [ editAuthor ] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [ { query: ALL_AUTHORS } ]
+    refetchQueries: [ { query: ALL_AUTHORS } ],
+    onError: (error) => {
+      setError(error.graphQLErrors[0].message)
+    }
   })
 
   const submit = async (event) => {
