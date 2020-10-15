@@ -8,6 +8,25 @@ export const ALL_BOOKS = gql`
         name
       }
       published
+      genres
+    }
+  }
+`
+
+export const RECOMMENDATIONS = gql`
+  query {
+    allBooks  {
+      title
+      author {
+        name
+      }
+      published
+      genres
+    }
+
+    me {
+      username
+      favoriteGenre
     }
   }
 `
