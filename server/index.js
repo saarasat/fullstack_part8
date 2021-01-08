@@ -50,6 +50,7 @@ const typeDefs = gql`
     name: String!
     born: Int
     bookCount: Int
+    books: [Book]
     id: ID!
   }
 
@@ -112,17 +113,21 @@ const resolvers = {
       return books
     },
     allAuthors: async () => {
-      const authors = await Author.find({})
+      const authors = await Author.find({}).populate('books')
+      for (author of authors) {
+        author.bookCount = author.books.length
+      }
       return authors
     },
   },
+  /*
   Author: {
     bookCount: async (root, args) => {
       const books = await Book.find({ author: { $in: [root._id]}})
       if (books) return books.length
       else return 0
-    } 
-  },
+    }
+  },*/
   Mutation: {
     createUser: (root, args) => {
       const user = new User({ username: args.username })
@@ -169,6 +174,7 @@ const resolvers = {
         }
       }
       const book = new Book({ ...args, author, id: uuid() });
+      author.books.push(book.id);
       try {
         await book.save();
         await author.save();
