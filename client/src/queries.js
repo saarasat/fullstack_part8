@@ -12,7 +12,8 @@ export const ALL_BOOKS = gql`
         name
       }
       published
-      genres  
+      genres
+      id
     }
   } 
 `
@@ -26,6 +27,7 @@ export const RECOMMENDATIONS = gql`
       }
       published
       genres
+      id
     }
     me {
       username
@@ -40,6 +42,7 @@ export const ALL_AUTHORS = gql`
       name
       born
       bookCount
+      id
     }
   }
 `
@@ -63,6 +66,7 @@ export const CREATE_BOOK = gql`
         }
         published
         genres
+        id
       }
     }
   
@@ -77,6 +81,7 @@ export const BOOK_ADDED = gql`
       }
       published
       genres
+      id
     }
   }
 `

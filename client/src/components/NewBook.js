@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ALL_BOOKS, CREATE_BOOK, RECOMMENDATIONS } from '../queries'
+import { CREATE_BOOK } from '../queries'
 
-const NewBook = ({ show, setError }) => {
+const NewBook = ({ show, setError, updateCacheWith }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState(2000)
@@ -10,24 +10,17 @@ const NewBook = ({ show, setError }) => {
   const [genres, setGenres] = useState([])
 
   const [ createBook ] = useMutation(CREATE_BOOK, {
-    refetchQueries: [ { query: ALL_BOOKS } ],
+    //refetchQueries: [ { query: ALL_BOOKS } ],
     onError: (error) => {
-      console.log(error.graphQLErrors[0].extensions.code)
-      if (error.graphQLErrors[0].extensions.code === "BAD_USER_INPUT") {
+      if (error.graphQLErrors.extensions && error.graphQLErrors[0].extensions.code === "BAD_USER_INPUT") {
         setError("Check the title and author, they should be more than 4 characters", "error")
       } else {
         setError("Oh ou, something went wrong, try again", "error")
+        console.log(error)
       }
     },
     update: (store, response) => {
-      const dataInStore = store.readQuery({ query: RECOMMENDATIONS })
-      store.writeQuery({
-        query: RECOMMENDATIONS,
-        data: {
-          ...dataInStore,
-          allBooks: [...dataInStore.allBooks, response.data.addBook]
-        }
-      })
+      updateCacheWith(response.data.addBook)
     }
   })
 

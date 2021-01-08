@@ -10,7 +10,7 @@ const Login = ({ setError, setToken, show, setPage }) => {
   const [ login, result ] = useMutation(LOGIN, {
     onError: (error) => {
       console.log(error)
-      setError("Error")
+      setError(error, "Error")
     }
   })
 
@@ -21,7 +21,7 @@ const Login = ({ setError, setToken, show, setPage }) => {
       localStorage.setItem('library-user-token', token)
       setPage('books')
     }
-  }, [result.data])
+  }, [result.data, setPage, setToken])
 
   const submit = async (event) => {
     event.preventDefault()

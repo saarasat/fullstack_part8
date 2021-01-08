@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useQuery } from '@apollo/client'
 import { RECOMMENDATIONS } from '../queries'
 
@@ -19,7 +19,7 @@ const Recommendations = ({ show }) => {
   
   return (
     <div>
-      <h2>books</h2>
+      <h2>book recommendations</h2>
 
       <table>
         <tbody>
