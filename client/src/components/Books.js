@@ -4,10 +4,7 @@ import { ALL_BOOKS } from '../queries'
 
 
 const List = ({ genre }) => {
-  const { loading, error, data } = useQuery(ALL_BOOKS, {
-    variables: { genre: genre },
-    pollInterval: 2000
-  })
+  const { loading, error, data } = useQuery(ALL_BOOKS, { variables: { genre: genre } })
   if (loading) return <div>loading...</div>
   if (!data) return <div>No books available</div>
   if (error) return <div>Error loading books</div>
@@ -40,9 +37,7 @@ const List = ({ genre }) => {
 
 const Books = ({ show }) => {
   const [genre, setGenre] = useState('')
-  const { loading, error, data } = useQuery(ALL_BOOKS, {
-    pollInterval: 2000
-  })
+  const { loading, error, data } = useQuery(ALL_BOOKS)
 
   if (!show) {
     return null
