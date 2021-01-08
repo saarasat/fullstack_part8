@@ -1,12 +1,18 @@
 import React from 'react'
 
-const Notify = ({ errorMessage }) => {
-  if ( !errorMessage ) {
+const Notify = ({ message, type }) => {
+
+  const colors = {
+    success: 'green',
+    error: 'red'
+  }
+
+  if ( !message ) {
     return null
   }
   return (
-    <div style={{color: 'red'}}>
-      {errorMessage}
+    <div style={{ color: colors[type] }}>
+      {message}
     </div>
   )
 }

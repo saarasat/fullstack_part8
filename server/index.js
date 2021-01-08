@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, PubSub } = require('apollo-server')
 const jwt = require('jsonwebtoken')
 const { v1: uuid } = require('uuid')
 const mongoose = require('mongoose')
@@ -22,6 +22,8 @@ if (process.argv.length < 3) {
 const password = process.argv[2]
 
 const MONGODB_URI = `mongodb+srv://fullstack:${password}@fullstack.yoea7.mongodb.net/<dbname>?retryWrites=true&w=majority`
+
+const pubsub = new PubSub()
 
 console.log('connecting to', MONGODB_URI)
 
@@ -88,6 +90,10 @@ const typeDefs = gql`
       name: String!
       born: Int
     ): Author
+  }
+
+  type Subscription {
+    bookAdded: Book!
   }
 
 `
@@ -171,6 +177,9 @@ const resolvers = {
           invalidArgs: args
         });
       }
+
+      pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
       return book
     },
     editAuthor: async (root, args, context) => {
@@ -184,6 +193,11 @@ const resolvers = {
       if (!author) return null
       author.born = args.born
       return author.save()
+    }
+  }, 
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
     }
   }
 }
@@ -206,6 +220,7 @@ const server = new ApolloServer({
 })
 
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })

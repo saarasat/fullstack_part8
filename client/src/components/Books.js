@@ -69,9 +69,11 @@ const Books = ({ show }) => {
         <tbody>
           <tr>
             {genres.map(g =>
-              <td key={g}>
-                <button onClick={() => setGenre(g)}>{g}</button>
-              </td>
+              g && (
+                <td key={g}>
+                  <button onClick={() => setGenre(g)}>{g}</button>
+                </td>
+              )
             )}
           </tr>
         </tbody>

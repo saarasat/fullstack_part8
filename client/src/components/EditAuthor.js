@@ -9,7 +9,7 @@ const EditAuthor = ({ authors, setError }) => {
   const [ editAuthor ] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [ { query: ALL_AUTHORS } ],
     onError: (error) => {
-      setError(error.graphQLErrors[0].message)
+      setError(error.graphQLErrors[0].message, 'error')
     }
   })
 

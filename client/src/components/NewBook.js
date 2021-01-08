@@ -14,11 +14,10 @@ const NewBook = ({ show, setError }) => {
     onError: (error) => {
       console.log(error.graphQLErrors[0].extensions.code)
       if (error.graphQLErrors[0].extensions.code === "BAD_USER_INPUT") {
-        setError("Check the title and author, they should be more than 4 characters")
+        setError("Check the title and author, they should be more than 4 characters", "error")
       } else {
-        setError("Oh ou, something went wrong, try again")
+        setError("Oh ou, something went wrong, try again", "error")
       }
-      setTimeout(() => setError(''), 5000)
     },
     update: (store, response) => {
       const dataInStore = store.readQuery({ query: RECOMMENDATIONS })

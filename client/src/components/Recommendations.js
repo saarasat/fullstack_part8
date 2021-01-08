@@ -3,10 +3,10 @@ import { useQuery } from '@apollo/client'
 import { RECOMMENDATIONS } from '../queries'
 
 
-const Recommendations = (props) => {
+const Recommendations = ({ show }) => {
   const { loading, error, data } = useQuery(RECOMMENDATIONS)
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 

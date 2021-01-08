@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -6,10 +6,13 @@ import Login from './components/Login'
 import NewBook from './components/NewBook'
 import Notify from './components/Notify'
 import Recommendations from './components/Recommendations'
+import { BOOK_ADDED } from './queries'
+
 
 const App = () => {
   const [token, setToken] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
+  const [type, setType] = useState('success')
   const [page, setPage] = useState('authors')
   const client = useApolloClient()
 
@@ -20,17 +23,25 @@ const App = () => {
     }
   }, [])
 
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const { title, author } = subscriptionData.data.bookAdded
+      notify(`New book, ${title} by ${author.name} has been added!`, 'success')
+    }
+  })
+
   const logout = () => {
     setToken(null)
     localStorage.clear()
     client.resetStore()
   }
 
-  const notify = (message) => {
-    setErrorMessage(message)
+  const notify = (newMessage, newType) => {
+    setMessage(newMessage)
+    setType(newType)
     setTimeout(() => {
-      setErrorMessage(null)
-    }, 5000)
+      setMessage(null)
+    }, 6000)
   }
 
   return (
@@ -61,7 +72,6 @@ const App = () => {
         show={page === 'add'}
       />
       <Recommendations
-        setError={notify}
         show={page === 'recommendations'}
       />
       <Login
@@ -70,7 +80,7 @@ const App = () => {
         show={page === 'login'}
         setPage={setPage} 
       />
-      <Notify errorMessage={errorMessage} />
+      <Notify message={message} type={type} />
     </div>
   )
 }
