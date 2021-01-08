@@ -3,16 +3,48 @@ import { useQuery } from '@apollo/client'
 import { ALL_BOOKS } from '../queries'
 
 
-const Books = (props) => {
-  const { loading, error, data } = useQuery(ALL_BOOKS)
-  const [genre, setGenre] = useState('')
+const List = ({ genre }) => {
+  const { loading, error, data } = useQuery(ALL_BOOKS, { variables: { genre: genre } })
+  if (loading) return <div>loading...</div>
+  if (!data) return <div>No books available</div>
+  if (error) return <div>Error loading books</div>
 
-  if (!props.show) {
+  return (
+    <table>
+      <tbody>
+        <tr>
+          <th>
+            title
+          </th>
+          <th>
+            author
+          </th>
+          <th>
+            published
+          </th>
+        </tr>
+        {data.allBooks.map(a =>
+          <tr key={a.title}>
+            <td>{a.title}</td>
+            <td>{a.author.name}</td>
+            <td>{a.published}</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  )
+}
+
+const Books = ({ show }) => {
+  const [genre, setGenre] = useState('')
+  const { loading, error, data } = useQuery(ALL_BOOKS)
+
+  if (!show) {
     return null
   }
 
   if (loading) return <div>loading...</div>
-
+  if (!data) return <div>Error loading books</div>
   if (error) return <div>Error loading books</div>
 
   const genreOptions = () => {
@@ -28,34 +60,11 @@ const Books = (props) => {
   }
 
   const genres = genreOptions()
-  const books = data.allBooks.filter(b => b.genres.includes(genre))
   
   return (
     <div>
-      <h2>books</h2>
-
-      <table>
-        <tbody>
-          <tr>
-            <th>
-              title
-            </th>
-            <th>
-              author
-            </th>
-            <th>
-              published
-            </th>
-          </tr>
-          {books.map(a =>
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <h2>Books</h2>
+      <List genre={genre} />
       <table>
         <tbody>
           <tr>

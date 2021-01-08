@@ -64,7 +64,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks: [Book!]!
+    allBooks(genre: String): [Book!]!
     allAuthors: [Author!]!
     me: User
   }
@@ -99,8 +99,10 @@ const resolvers = {
     },
     bookCount: async () => await Book.collection.countDocuments(),
     authorCount: async () => await Author.collection.countDocuments(),
-    allBooks: async () => {
-      const books = await Book.find({}).populate('author')
+    allBooks: async (root, args) => {
+      const books = args.genre ?
+        await Book.find({ genres: { $in: [args.genre] }}).populate('author')
+        : await Book.find({}).populate('author')
       return books
     },
     allAuthors: async () => {
@@ -190,7 +192,6 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
-    console.log(req.headers)
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(
