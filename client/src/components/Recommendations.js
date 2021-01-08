@@ -14,6 +14,8 @@ const Recommendations = ({ show }) => {
 
   if (error) return <div>Error loading books</div>
 
+  if (!data) return null
+  
   const user = data.me
   const books = data.allBooks.filter(b => b.genres.includes(user.favoriteGenre))
   
