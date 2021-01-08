@@ -4,7 +4,9 @@ import { RECOMMENDATIONS } from '../queries'
 
 
 const Recommendations = ({ show }) => {
-  const { loading, error, data } = useQuery(RECOMMENDATIONS)
+  const { loading, error, data } = useQuery(RECOMMENDATIONS, {
+    pollInterval: 2000
+  })
 
   if (!show) {
     return null

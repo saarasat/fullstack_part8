@@ -20,12 +20,12 @@ const NewBook = ({ show, setError }) => {
       }
     },
     update: (store, response) => {
-      const dataInStore = store.readQuery({ query: RECOMMENDATIONS })
+      const recommendationsInStore = store.readQuery({ query: RECOMMENDATIONS })
       store.writeQuery({
         query: RECOMMENDATIONS,
         data: {
-          ...dataInStore,
-          allBooks: [...dataInStore.allBooks, response.data.addBook]
+          ...recommendationsInStore,
+          allBooks: [...recommendationsInStore.allBooks, response.data.addBook]
         }
       })
     }
